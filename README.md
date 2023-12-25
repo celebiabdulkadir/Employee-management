@@ -24,7 +24,7 @@ This is a RESTful API for managing employee records. It's built with Node.js and
 All routes except `/register` and `/login` require a valid JWT in the `Authorization` header.
 ```
 
-## Authorization
+## Authenticaiton
 
 1. User Registration: When a user registers, a refresh token is created and stored in the user's document in the database. This refresh token is created with a secret key (JWT_REFRESH_SECRET_KEY) and is stored in the refreshTokens array of the user's document.
 
