@@ -1,0 +1,183 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'Employee Management API'
+  description: API for managing employee registrations, logins, and operations
+
+paths:
+  /register:
+    post:
+      summary: Register a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRegistration'
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+
+  /login:
+    post:
+      summary: Login for an employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: Access token for the user session
+
+  /token:
+    post:
+      summary: Refresh the access token
+      responses:
+        '200':
+          description: Token refreshed successfully
+
+  /logout:
+    post:
+      summary: Logout the employee
+      responses:
+        '200':
+          description: Logout successful
+
+  /employees:
+    get:
+      summary: Get all employees
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of all employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+    post:
+      summary: Create a new employee
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Employee created successfully
+
+  /employees/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get an employee by ID
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Details of the employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+    put:
+      summary: Update an employee's details
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Employee updated successfully
+    delete:
+      summary: Delete an employee
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Employee deleted successfully
+
+components:
+  schemas:
+    EmployeeRegistration:
+      type: object
+      required:
+        - name
+        - age
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+        email:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A human readable error message
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
